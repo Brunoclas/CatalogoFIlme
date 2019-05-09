@@ -1,4 +1,17 @@
 <?xml version="1.0" encoding="utf-8"?>
 <menu xmlns:android="http://schemas.android.com/apk/res/android">
+    <item
+        android:id="@+id/navigation_home"
+        android:icon="@drawable/home_variant_outline"
+        android:title="Pagina inicial" />
 
+    <item
+        android:id="@+id/navigation_biblioteca"
+        android:icon="@drawable/library_video"
+        android:title="Biblioteca" />
+
+    <item
+        android:id="@+id/navigation_lista_interesses"
+        android:icon="@drawable/playlist_check"
+        android:title="Lista Interesse" />
 </menu>
