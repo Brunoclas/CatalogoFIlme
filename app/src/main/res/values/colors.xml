@@ -6,4 +6,5 @@
 
     <color name="colorPrimaryText">#fafafa</color>
     <color name="colorSecondText">#484848</color>
+    <color name="colorTransparent">#00ffffff</color>
 </resources>

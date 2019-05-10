@@ -1,9 +1,12 @@
 package com.example.catalogodefilmes.model;
 
+import android.os.Parcel;
+import android.os.Parcelable;
+
 import java.math.BigDecimal;
 import java.util.ArrayList;
 
-public class Movie {
+public class Movie implements Parcelable {
 
     private int vote_count;
     private int id;
@@ -18,6 +21,33 @@ public class Movie {
     private int [] genre_ids;
     private String backdrop_path;
     private boolean adult;
+
+    protected Movie(Parcel in) {
+        vote_count = in.readInt();
+        id = in.readInt();
+        video = in.readByte() != 0;
+        title = in.readString();
+        overview = in.readString();
+        poster_path = in.readString();
+        original_title = in.readString();
+        original_language = in.readString();
+        genre_ids = in.createIntArray();
+        backdrop_path = in.readString();
+        adult = in.readByte() != 0;
+        release_date = in.readString();
+    }
+
+    public static final Creator<Movie> CREATOR = new Creator<Movie>() {
+        @Override
+        public Movie createFromParcel(Parcel in) {
+            return new Movie(in);
+        }
+
+        @Override
+        public Movie[] newArray(int size) {
+            return new Movie[size];
+        }
+    };
 
     public BigDecimal getVote_average() {
         return vote_average;
@@ -131,5 +161,26 @@ public class Movie {
 
     public void setGenre_ids(int[] genre_ids) {
         this.genre_ids = genre_ids;
+    }
+
+    @Override
+    public int describeContents() {
+        return 0;
+    }
+
+    @Override
+    public void writeToParcel(Parcel dest, int flags) {
+        dest.writeInt(vote_count);
+        dest.writeInt(id);
+        dest.writeByte((byte) (video ? 1 : 0));
+        dest.writeString(title);
+        dest.writeString(overview);
+        dest.writeString(poster_path);
+        dest.writeString(original_title);
+        dest.writeString(original_language);
+        dest.writeIntArray(genre_ids);
+        dest.writeString(backdrop_path);
+        dest.writeByte((byte) (adult ? 1 : 0));
+        dest.writeString(release_date);
     }
 }

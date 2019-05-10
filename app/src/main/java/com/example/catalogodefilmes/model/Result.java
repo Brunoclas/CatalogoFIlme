@@ -1,12 +1,15 @@
 package com.example.catalogodefilmes.model;
 
+import android.os.Parcel;
+import android.os.Parcelable;
+
 import java.util.List;
 
-public class Results {
+public class Result implements Parcelable {
     private List<Movie> results;
     private int page;
     private int total_results;
-    private String[] dates;
+    //private String[] dates;
 
     public List<Movie> getResults() {
         return results;
@@ -32,13 +35,13 @@ public class Results {
         this.total_results = total_results;
     }
 
-    public String[] getDates() {
-        return dates;
-    }
-
-    public void setDates(String[] dates) {
-        this.dates = dates;
-    }
+//    public String[] getDates() {
+//        return dates;
+//    }
+//
+//    public void setDates(String[] dates) {
+//        this.dates = dates;
+//    }
 
     public int getTotal_pages() {
         return total_pages;
@@ -49,4 +52,14 @@ public class Results {
     }
 
     private int total_pages;
+
+    @Override
+    public int describeContents() {
+        return 0;
+    }
+
+    @Override
+    public void writeToParcel(Parcel dest, int flags) {
+
+    }
 }

@@ -1,13 +1,10 @@
 package com.example.catalogodefilmes.view.fragments;
 
-import android.content.Context;
+import android.content.Intent;
 import android.os.Bundle;
-import android.os.Handler;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
-import android.support.v7.widget.DividerItemDecoration;
-import android.support.v7.widget.LinearLayoutCompat;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
@@ -15,32 +12,19 @@ import android.view.View;
 import android.view.ViewGroup;
 
 import com.example.catalogodefilmes.R;
-import com.example.catalogodefilmes.controller.CategFilmesHolder;
 import com.example.catalogodefilmes.controller.FilmesHolder;
-import com.example.catalogodefilmes.controller.adapters.CategFilmesAdapter;
 import com.example.catalogodefilmes.controller.adapters.FilmesAdapter;
-import com.example.catalogodefilmes.controller.webservice.IResponse;
-import com.example.catalogodefilmes.controller.webservice.ResponseAsk;
-import com.example.catalogodefilmes.controller.webservice.UrlUtils;
 import com.example.catalogodefilmes.model.Movie;
+import com.example.catalogodefilmes.model.Result;
+import com.example.catalogodefilmes.view.activities.DescricaoActivity;
 
-import java.io.IOException;
-import java.util.ArrayList;
 import java.util.List;
 
-import retrofit2.Call;
-import retrofit2.Callback;
-import retrofit2.Response;
+public class HomeFragment extends Fragment implements FilmesAdapter.OnCLickFilmeListener {
 
-public class HomeFragment extends Fragment implements IResponse {
-
-    private RecyclerView listNowPlay;
-    private CategFilmesAdapter categFilmesAdapter;
-    private String[] categorias = {"Lançamento", "Ação", "Aventura", "Terror"};
-    private List<Movie> moviess;
+    private RecyclerView listNowPlay, listPopular;
     private FilmesAdapter filmesAdapter;
-    private FilmesHolder filmesHolder;
-    IResponse iResponse;
+    private Result now_playing, popular;
 
 
     @Nullable
@@ -49,52 +33,46 @@ public class HomeFragment extends Fragment implements IResponse {
 
         View v = inflater.inflate(R.layout.frag_home, container, false);
         listNowPlay = v.findViewById(R.id.listNowPlay);
-
-//        ResponseAsk responseAsk = new ResponseAsk();
-//        responseAsk.iResponse = (IResponse) this;
-//        responseAsk.execute();
-
+        listPopular = v.findViewById(R.id.listPopular);
+        Bundle bundle = getArguments();
+        now_playing = bundle.getParcelable("movie_now");
+        popular = bundle.getParcelable("popular");
+        carregaListaNowMovie();
+        carregaListaPopular();
         return v;
     }
 
-//    private void carregaLista() {
-//
-//        Call<List<Movie>> call = UrlUtils.getService().listNowPlaying();
-//
-//        movies = new ArrayList<>();
-////        movies = call.execute().body();
-//
-//        call.enqueue(new Callback<List<Movie>>() {
-//            @Override
-//            public void onResponse(Call<List<Movie>> call, Response<List<Movie>> response) {
-//                movies = response.body();
-//
-//                filmesAdapter = new FilmesAdapter(movies);
-//
-//                LinearLayoutManager linearLayoutManager = new LinearLayoutManager(getContext(), LinearLayoutManager.VERTICAL, false);
-//                listNowPlay.setLayoutManager(linearLayoutManager);
-//
-//                //categFilmesAdapter = new CategFilmesAdapter(categorias);
-//                listNowPlay.setAdapter(filmesAdapter);
-//
-//                listNowPlay.addItemDecoration(new DividerItemDecoration(getContext(), DividerItemDecoration.VERTICAL));
-//            }
-//
-//            @Override
-//            public void onFailure(Call<List<Movie>> call, Throwable t) {
-//
-//            }
-//        });
-//
-//
-//    }
+    private void carregaListaNowMovie() {
+        LinearLayoutManager linearLayoutManager = new LinearLayoutManager(getContext(), LinearLayoutManager.HORIZONTAL, false);
+        listNowPlay.setLayoutManager(linearLayoutManager);
+
+        filmesAdapter = new FilmesAdapter(now_playing, this);
+        listNowPlay.setAdapter(filmesAdapter);
+    }
+
+    private void carregaListaPopular() {
+        LinearLayoutManager linearLayoutManager = new LinearLayoutManager(getContext(), LinearLayoutManager.HORIZONTAL, false);
+        listPopular.setLayoutManager(linearLayoutManager);
+
+        filmesAdapter = new FilmesAdapter(popular, this);
+        listPopular.setAdapter(filmesAdapter);
+    }
 
     public static HomeFragment newStance() {
         return new HomeFragment();
     }
 
     @Override
-    public void responseRetorfit(List<Movie> movies) {
-        moviess = movies;
+    public void onClickFilmeListener(int position) {
+        try {
+            Intent intent = new Intent(getContext(), DescricaoActivity.class);
+            Bundle bundle = new Bundle();
+            bundle.putParcelable("result", now_playing.getResults().get(position));
+            intent.putExtras(bundle);
+            getContext().startActivity(intent);
+        } catch (Exception e) {
+            e.getStackTrace();
+            e.getMessage();
+        }
     }
 }

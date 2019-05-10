@@ -1,6 +1,7 @@
 package com.example.catalogodefilmes.view.activities;
 
 import android.os.Bundle;
+import android.os.Parcelable;
 import android.support.annotation.NonNull;
 import android.support.design.widget.BottomNavigationView;
 import android.support.design.widget.NavigationView;
@@ -12,17 +13,13 @@ import android.view.MenuItem;
 
 import com.example.catalogodefilmes.R;
 import com.example.catalogodefilmes.controller.Utils.Config;
-import com.example.catalogodefilmes.controller.webservice.IResponse;
 import com.example.catalogodefilmes.controller.webservice.IService;
-import com.example.catalogodefilmes.controller.webservice.ResponseAsk;
 import com.example.catalogodefilmes.controller.webservice.UrlUtils;
 import com.example.catalogodefilmes.model.ResponseMovie;
-import com.example.catalogodefilmes.model.Results;
+import com.example.catalogodefilmes.model.Result;
 import com.example.catalogodefilmes.view.fragments.BibliotecaFragment;
 import com.example.catalogodefilmes.view.fragments.HomeFragment;
 import com.example.catalogodefilmes.view.fragments.ListaInteresseFragment;
-
-import java.util.ArrayList;
 
 import retrofit2.Call;
 import retrofit2.Callback;
@@ -33,7 +30,9 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
     private IService iService;
     private Toolbar toolbar;
     private BottomNavigationView bottomNavigationView;
-    private Results results;
+    private Result now_playing;
+    private Result popular;
+    private Bundle bundle = new Bundle();
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -60,23 +59,55 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
             }
         });
 
+        //Request de lancamentos
+        try {
+            Call<Result> callResults = UrlUtils.getService().listNowPlaying();
+            callResults.enqueue(new Callback<Result>() {
+                @Override
+                public void onResponse(Call<Result> call, Response<Result> response) {
+                    now_playing = response.body();
 
+                    bundle.putParcelable("movie_now", (Parcelable) now_playing);
 
-        Call<Results> calll = UrlUtils.getService().listNowPlaying();
-        calll.enqueue(new Callback<Results>() {
-            @Override
-            public void onResponse(Call<Results> call, Response<Results> response) {
-                results = response.body();
-            }
+//                    Fragment homeFragment = HomeFragment.newStance();
+//                    homeFragment.setArguments(bundle);
+//                    openFragment(homeFragment, R.id.frameLayout);
+                }
 
-            @Override
-            public void onFailure(Call<Results> call, Throwable t) {
+                @Override
+                public void onFailure(Call<Result> call, Throwable t) {
+                    t.getMessage();
+                }
+            });
+        } catch (Exception e) {
+            e.getMessage();
+            e.getStackTrace();
+        }
 
-            }
-        });
+        //Reques de filmes populares
+        try {
+            Call<Result> callResults = UrlUtils.getService().popular();
+            callResults.enqueue(new Callback<Result>() {
+                @Override
+                public void onResponse(Call<Result> call, Response<Result> response) {
+                    popular = response.body();
 
-        Fragment homeFragment = HomeFragment.newStance();
-        openFragment(homeFragment, R.id.frameLayout);
+                    bundle.putParcelable("popular", (Parcelable) popular);
+
+                    Fragment homeFragment = HomeFragment.newStance();
+                    homeFragment.setArguments(bundle);
+                    openFragment(homeFragment, R.id.frameLayout);
+                }
+
+                @Override
+                public void onFailure(Call<Result> call, Throwable t) {
+                    t.getMessage();
+                }
+            });
+        } catch (Exception e) {
+            e.getMessage();
+            e.getStackTrace();
+        }
 
     }
 
@@ -89,10 +120,10 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
 
     @Override
     public boolean onNavigationItemSelected(@NonNull MenuItem menuItem) {
-
         switch (menuItem.getItemId()) {
             case R.id.navigation_home:
                 Fragment homeFragment = HomeFragment.newStance();
+                homeFragment.setArguments(bundle);
                 openFragment(homeFragment, R.id.frameLayout);
                 break;
             case R.id.navigation_biblioteca:
@@ -105,7 +136,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
                 break;
         }
 
-            return true;
+        return true;
     }
 
 }
