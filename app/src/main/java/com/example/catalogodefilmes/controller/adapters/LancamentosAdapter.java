@@ -1,50 +1,47 @@
 package com.example.catalogodefilmes.controller.adapters;
 
-import android.app.Activity;
 import android.support.annotation.NonNull;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
-import com.example.catalogodefilmes.controller.FilmesHolder;
+import com.example.catalogodefilmes.R;
+import com.example.catalogodefilmes.controller.LancamentoHolder;
 import com.example.catalogodefilmes.controller.Utils.Config;
 import com.example.catalogodefilmes.model.Result;
 import com.squareup.picasso.Picasso;
-import com.example.catalogodefilmes.R;
 
 import java.text.DecimalFormat;
 
-public class FilmesAdapter extends RecyclerView.Adapter<FilmesHolder> {
-
+public class LancamentosAdapter extends RecyclerView.Adapter<LancamentoHolder> {
     private Result result;
-    OnCLickFilmeListener onCLickFilmeListener;
+    OnClickLancamentoListener onClickLancamentoListener;
 
-    public FilmesAdapter(Result result, OnCLickFilmeListener onCLickFilmeListener) {
+    public LancamentosAdapter(Result result, OnClickLancamentoListener onClickLancamentoListener) {
         this.result = result;
-        this.onCLickFilmeListener = onCLickFilmeListener;
+        this.onClickLancamentoListener = onClickLancamentoListener;
     }
 
     @NonNull
     @Override
-    public FilmesHolder onCreateViewHolder(@NonNull ViewGroup viewGroup, int i) {
+    public LancamentoHolder onCreateViewHolder(@NonNull ViewGroup viewGroup, int i) {
         View v = LayoutInflater.from(viewGroup.getContext())
                 .inflate(R.layout.item_list_filmes, viewGroup, false);
-        return new FilmesHolder(v, onCLickFilmeListener);
+        return new LancamentoHolder(v, onClickLancamentoListener);
     }
 
     @Override
-    public void onBindViewHolder(@NonNull final FilmesHolder filmesHolder, int i) {
+    public void onBindViewHolder(@NonNull LancamentoHolder lancamentoHolder, int i) {
         Picasso.get()
                 .load(Config.URL_IMG + result.getResults().get(i).getPoster_path())
                 .resize(300, 500)
                 .centerInside()
                 //.error(R.drawable.user_placeholder_error)
-                .into(filmesHolder.imgFilme);
+                .into(lancamentoHolder.imgFilme);
         DecimalFormat df = new DecimalFormat("#,###.00");
         String preco = df.format(result.getResults().get(i).getVote_average());
-        filmesHolder.txtPreco.setText("R$: " + (preco));
-
+        lancamentoHolder.txtPreco.setText("R$: " + (preco));
     }
 
     @Override
@@ -52,7 +49,7 @@ public class FilmesAdapter extends RecyclerView.Adapter<FilmesHolder> {
         return result.getResults().size();
     }
 
-    public interface OnCLickFilmeListener{
-        void onClickFilmeListener(int position);
+    public interface OnClickLancamentoListener{
+        void onClickLancamentoListener(int position);
     }
 }

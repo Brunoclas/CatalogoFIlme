@@ -30,8 +30,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
     private IService iService;
     private Toolbar toolbar;
     private BottomNavigationView bottomNavigationView;
-    private Result now_playing;
-    private Result popular;
+    private Result now_playing, popular, maisCotados;
     private Bundle bundle = new Bundle();
 
     @Override
@@ -44,34 +43,16 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         bottomNavigationView = findViewById(R.id.bottomNavigationView);
         bottomNavigationView.setOnNavigationItemSelectedListener(this);
 
-        Call<ResponseMovie> call = UrlUtils.getService().listaFilmes(Config.API_KEY);
-        call.enqueue(new Callback<ResponseMovie>() {
-            @Override
-            public void onResponse(Call<ResponseMovie> call, Response<ResponseMovie> response) {
-                ResponseMovie responseMovie = new ResponseMovie();
-                responseMovie = response.body();
-
-            }
-
-            @Override
-            public void onFailure(Call<ResponseMovie> call, Throwable t) {
-
-            }
-        });
-
-        //Request de lancamentos
+        //Request de filmes nos cinemas
         try {
-            Call<Result> callResults = UrlUtils.getService().listNowPlaying();
-            callResults.enqueue(new Callback<Result>() {
+            Call<Result> callNowPlaying= UrlUtils.getService().listNowPlaying();
+            callNowPlaying.enqueue(new Callback<Result>() {
                 @Override
                 public void onResponse(Call<Result> call, Response<Result> response) {
                     now_playing = response.body();
 
-                    bundle.putParcelable("movie_now", (Parcelable) now_playing);
+                    bundle.putParcelable("movie_now", now_playing);
 
-//                    Fragment homeFragment = HomeFragment.newStance();
-//                    homeFragment.setArguments(bundle);
-//                    openFragment(homeFragment, R.id.frameLayout);
                 }
 
                 @Override
@@ -84,7 +65,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
             e.getStackTrace();
         }
 
-        //Reques de filmes populares
+        //Request de filmes populares
         try {
             Call<Result> callResults = UrlUtils.getService().popular();
             callResults.enqueue(new Callback<Result>() {
@@ -92,7 +73,27 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
                 public void onResponse(Call<Result> call, Response<Result> response) {
                     popular = response.body();
 
-                    bundle.putParcelable("popular", (Parcelable) popular);
+                    bundle.putParcelable("popular", popular);
+
+                }
+
+                @Override
+                public void onFailure(Call<Result> call, Throwable t) {
+                    t.getMessage();
+                }
+            });
+        } catch (Exception e) {
+            e.getMessage();
+            e.getStackTrace();
+        }
+
+        try{
+            Call<Result> callLancamentos = UrlUtils.getService().maisCotados();
+            callLancamentos.enqueue(new Callback<Result>() {
+                @Override
+                public void onResponse(Call<Result> call, Response<Result> response) {
+                    maisCotados = response.body();
+                    bundle.putParcelable("mais_cotados", maisCotados);
 
                     Fragment homeFragment = HomeFragment.newStance();
                     homeFragment.setArguments(bundle);
@@ -104,9 +105,10 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
                     t.getMessage();
                 }
             });
-        } catch (Exception e) {
-            e.getMessage();
+
+        }catch (Exception e){
             e.getStackTrace();
+            e.getMessage();
         }
 
     }

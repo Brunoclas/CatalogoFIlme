@@ -63,7 +63,7 @@ public class DescricaoActivity extends AppCompatActivity {
             }
             Picasso.get()
                     .load(Config.URL_IMG + movie.getPoster_path())
-                    .resize(250, 250)
+                    .resize(350, 650)
                     .centerInside()
                     //.error(R.drawable.user_placeholder_error)
                     .into(imgImagem);
@@ -77,28 +77,31 @@ public class DescricaoActivity extends AppCompatActivity {
 
     private void carregaGenero() {
         try {
+
             final Call<ListGenero> callGenero = UrlUtils.getService().genero();
             callGenero.enqueue(new Callback<ListGenero>() {
                 @Override
                 public void onResponse(Call<ListGenero> call, Response<ListGenero> response) {
                     genero = response.body();
+                    String g = null;
+                    int x;
+                    for(x = 0; x < genero.getGenres().size(); x++) {
 
-                    for(int i = 0; movie.getGenre_ids().length >= 3; i++){
-
-                    }
-
-                    for (int i = 0; genero.getGenres().size() >= movie.getGenre_ids().length;i++ ) {
-                        switch (genero.getGenres().get(i).getId()){
-//                            case movie.getGenre_ids():
-//
-//                            break;
+                        for (int i = 0; i < movie.getGenre_ids().length; i++) {
+                            if(genero.getGenres().get(x).getId() == movie.getGenre_ids()[i]) {
+                                if(i == 0){
+                                    g = genero.getGenres().get(x).getName();
+                                }else{
+                                    g = g + ", " + genero.getGenres().get(x).getName();
+                                }
+                            }
                         }
 
-
-
-                        txtGenero.setText(genero.getGenres().get(i).getName());
                     }
+                        txtGenero.setText(g);
+
                 }
+
 
                 @Override
                 public void onFailure(Call<ListGenero> call, Throwable t) {
@@ -111,6 +114,6 @@ public class DescricaoActivity extends AppCompatActivity {
             e.getStackTrace();
             e.getMessage();
         }
-    }
+}
 
 }
