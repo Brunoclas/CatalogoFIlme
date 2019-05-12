@@ -7,7 +7,7 @@ import android.view.View;
 import android.view.ViewGroup;
 
 import com.example.catalogodefilmes.R;
-import com.example.catalogodefilmes.controller.LancamentoHolder;
+import com.example.catalogodefilmes.controller.holders.LancamentoHolder;
 import com.example.catalogodefilmes.controller.Utils.Config;
 import com.example.catalogodefilmes.model.Result;
 import com.squareup.picasso.Picasso;
